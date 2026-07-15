@@ -1,0 +1,2028 @@
+/* Charter — Medium's body serif. Bitstream Charter, X-consortium release.
+   License: public/fonts/charter/LICENSE.txt */
+@font-face {
+  font-family: "charter";
+  src: url("/fonts/charter/charter_regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  /* Charter declares a 98% ascent but caps reach only 67%, leaving dead space
+     above every line (caret floats above the text). Override to the font's own
+     typographic metrics so the line box hugs the glyphs. */
+  ascent-override: 76%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "charter";
+  src: url("/fonts/charter/charter_italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  /* Charter declares a 98% ascent but caps reach only 67%, leaving dead space
+     above every line (caret floats above the text). Override to the font's own
+     typographic metrics so the line box hugs the glyphs. */
+  ascent-override: 76%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "charter";
+  src: url("/fonts/charter/charter_bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  /* Charter declares a 98% ascent but caps reach only 67%, leaving dead space
+     above every line (caret floats above the text). Override to the font's own
+     typographic metrics so the line box hugs the glyphs. */
+  ascent-override: 76%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "charter";
+  src: url("/fonts/charter/charter_bold_italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+  /* Charter declares a 98% ascent but caps reach only 67%, leaving dead space
+     above every line (caret floats above the text). Override to the font's own
+     typographic metrics so the line box hugs the glyphs. */
+  ascent-override: 76%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --ink: #171512;
+  --read: #2b2521;
+  --paper: #f5f1e8;
+  --muted: #70695f;
+  --line: #d8cbb8;
+  --amber: #d4a84b;
+  --moss: #526052;
+  --wine: #5f2f3a;
+  --stone: #6c7a84;
+  --night: #161616;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+main {
+  min-height: 100vh;
+}
+
+/* Mobile overflow guard: contain any horizontal bleed (shadows, rounding,
+   full-bleed bands) so the page can never scroll sideways. Excludes the admin
+   editor, whose <main class="mEditorPage"> holds a position:sticky top bar that
+   overflow:clip would break. */
+main:not(.mEditorPage) {
+  overflow-x: clip;
+}
+
+.hero {
+  min-height: 92vh;
+  background:
+    linear-gradient(115deg, rgba(22, 22, 22, 0.9), rgba(82, 96, 82, 0.7)),
+    url("/the-probationers-cover.jpeg") center / cover;
+  color: #f7f1e4;
+  display: flex;
+  flex-direction: column;
+  padding: 24px clamp(18px, 4vw, 64px) 56px;
+}
+
+.nav {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 20px;
+  min-height: 44px;
+}
+
+.brand {
+  align-items: center;
+  display: inline-flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  gap: 9px;
+  letter-spacing: 0;
+}
+
+.brandMark {
+  display: block;
+  flex-shrink: 0;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(14px, 3vw, 32px);
+  color: rgba(247, 241, 228, 0.82);
+  font-size: 0.92rem;
+}
+
+.heroGrid {
+  align-items: center;
+  display: grid;
+  flex: 1;
+  gap: clamp(32px, 6vw, 86px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 410px);
+  margin: 24px auto 0;
+  max-width: 1160px;
+  width: 100%;
+}
+
+.heroCopy {
+  max-width: 720px;
+}
+
+.eyebrow {
+  color: var(--amber);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(4.2rem, 12vw, 7.6rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.9;
+  margin: 0;
+  max-width: 820px;
+}
+
+.lede {
+  color: rgba(247, 241, 228, 0.86);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.55;
+  margin: 28px 0 0;
+  max-width: 640px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.button {
+  align-items: center;
+  border-radius: 6px;
+  display: inline-flex;
+  font-size: 0.95rem;
+  font-weight: 700;
+  min-height: 46px;
+  padding: 0 18px;
+}
+
+.primary {
+  background: var(--amber);
+  color: #1d1710;
+}
+
+.secondary {
+  border: 1px solid rgba(247, 241, 228, 0.42);
+  color: #f7f1e4;
+}
+
+/* ── Region-aware Amazon buy link ─────────────────── */
+
+.buyAmazon {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.buyAmazonTld {
+  font-weight: 700;
+  margin-left: 6px;
+  opacity: 0.72;
+}
+
+.buyAmazonSwitch {
+  display: inline-flex;
+}
+
+.buyAmazonSwitch select {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 7px 8px;
+}
+
+.buyAmazonSwitch select:focus-visible {
+  border-color: var(--ink);
+  outline: none;
+}
+
+.srOnly {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.coverStage {
+  aspect-ratio: 0.64;
+  filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.34));
+  justify-self: end;
+  max-height: 610px;
+  max-width: 390px;
+  position: relative;
+  width: min(100%, 390px);
+}
+
+.coverImage {
+  border: 1px solid rgba(247, 241, 228, 0.24);
+  object-fit: cover;
+}
+
+.section {
+  display: grid;
+  gap: clamp(28px, 6vw, 72px);
+  grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr);
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(64px, 9vw, 112px) clamp(18px, 4vw, 42px);
+}
+
+.section h2 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 0;
+}
+
+.section p {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.22rem);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* Multi-paragraph body copy inside a .section column */
+.section .prose {
+  display: grid;
+  gap: 1.15em;
+}
+
+.contactLine {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.contactLine a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.detailBand {
+  background: var(--night);
+  color: #f7f1e4;
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.detail {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  justify-content: center;
+  min-height: 112px;
+  padding: 24px;
+  text-align: center;
+}
+
+.split {
+  border-bottom: 1px solid var(--line);
+}
+
+.questions {
+  display: block;
+}
+
+.sectionHeader {
+  margin-bottom: 32px;
+}
+
+.questionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booksSection {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(64px, 9vw, 112px) clamp(18px, 4vw, 42px);
+}
+
+.bookShelf {
+  display: grid;
+  gap: 18px;
+}
+
+.bookCard {
+  align-items: stretch;
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: clamp(22px, 4vw, 42px);
+  grid-template-columns: minmax(180px, 260px) minmax(0, 1fr);
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.bookCover {
+  align-self: start;
+  aspect-ratio: 0.625;
+  border: 1px solid rgba(23, 21, 18, 0.1);
+  border-radius: 4px;
+  /* Lift the cover off the cream card so its light top edge reads cleanly */
+  box-shadow:
+    0 12px 30px rgba(23, 21, 18, 0.2),
+    0 3px 8px rgba(23, 21, 18, 0.12);
+  position: relative;
+}
+
+.bookCoverImg {
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.bookInfo {
+  align-content: center;
+  display: grid;
+  gap: 14px;
+}
+
+.bookInfo > span,
+.futureCard > span {
+  color: var(--wine);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bookInfo h3,
+.futureCard h3 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1;
+  margin: 0;
+}
+
+.bookInfo p,
+.futureCard p {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.bookInfo .bookGenre {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.bookMeta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.bookMeta span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.bookMeta a {
+  background: var(--night);
+  border-radius: 6px;
+  color: #f7f1e4;
+  display: inline-flex;
+  font-weight: 700;
+  min-height: 42px;
+  padding: 11px 16px;
+}
+
+/* ── "Read a free sample" ─────────────────────────── */
+
+.samplePreviewBtn {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 700;
+  gap: 8px;
+  margin-top: 14px;
+  min-height: 42px;
+  padding: 0 16px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.samplePreviewBtn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Desktop sample modal */
+.sampleModalOverlay {
+  align-items: center;
+  background: rgba(22, 22, 22, 0.62);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 16px;
+  position: fixed;
+  z-index: 1000;
+}
+
+.sampleModalPanel {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  height: min(94vh, 1000px);
+  overflow: hidden;
+  width: min(680px, 100%);
+}
+
+.sampleModalBar {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-shrink: 0;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.sampleModalTitle {
+  color: var(--ink);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.sampleModalActions {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+
+.sampleModalOpen {
+  color: var(--wine);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.sampleModalClose {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px 6px;
+}
+
+.sampleModalClose:hover {
+  color: var(--ink);
+}
+
+.sampleModalFrame {
+  border: 0;
+  flex: 1;
+  width: 100%;
+}
+
+.futureCard {
+  border: 1px dashed rgba(95, 47, 58, 0.4);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.blogPreview,
+.blogIndex,
+.subscribeSection,
+.articlePage {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(64px, 9vw, 112px) clamp(18px, 4vw, 42px);
+}
+
+.simpleHero {
+  background:
+    linear-gradient(115deg, rgba(22, 22, 22, 0.9), rgba(82, 96, 82, 0.78)),
+    url("/the-probationers-cover.jpeg") center / cover;
+  color: #f7f1e4;
+  min-height: 58vh;
+  padding: 24px clamp(18px, 4vw, 64px) 72px;
+}
+
+.simpleHeroCopy {
+  margin: clamp(72px, 12vw, 150px) auto 0;
+  max-width: 900px;
+}
+
+.simpleHero h1,
+.articlePage h1 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(3.4rem, 8vw, 6.8rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.94;
+  margin: 0;
+}
+
+.postGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.postCard,
+.emptyState {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.postCard h2,
+.postCard h3,
+.emptyState h2,
+.emptyState h3 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.08;
+  margin: 0 0 14px;
+}
+
+.postCard p,
+.emptyState p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.postDate {
+  color: var(--wine) !important;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px !important;
+  text-transform: uppercase;
+}
+
+.textLink {
+  color: var(--wine);
+  display: inline-flex;
+  font-weight: 700;
+  margin-top: 22px;
+}
+
+.emptyState.compact {
+  max-width: 720px;
+}
+
+.subscribeSection {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: clamp(28px, 6vw, 72px);
+  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1fr);
+}
+
+.subscribeSection h2 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1;
+  margin: 0;
+}
+
+.subscribeForm {
+  display: grid;
+  gap: 12px;
+}
+
+.subscribeForm label {
+  color: var(--wine);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.subscribeRow {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.subscribeForm input {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+.subscribeRow button {
+  background: var(--night);
+  border: 0;
+  border-radius: 6px;
+  color: #f7f1e4;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  min-height: 48px;
+  padding: 0 18px;
+}
+
+.subscribeRow button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.subscribeForm p,
+.articleDate,
+.articleExcerpt {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.subscribeMsg {
+  font-weight: 700;
+}
+
+.subscribeMsg.isOk {
+  color: var(--moss);
+}
+
+.subscribeMsg.isError {
+  color: var(--wine);
+}
+
+.articlePage {
+  max-width: 840px;
+}
+
+.articlePage .eyebrow {
+  margin-top: 34px;
+}
+
+.articleDate {
+  margin-top: 18px;
+}
+
+.articleExcerpt {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.72;
+  margin-top: 28px;
+}
+
+.articleCover {
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  margin-top: 36px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* next/image fill positions the <img> absolutely; only cropping is left to us */
+.articleCover img {
+  object-fit: cover;
+}
+
+.postCardCover {
+  border-radius: 4px;
+  height: 180px;
+  margin: -24px -24px 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.postCardCover img {
+  object-fit: cover;
+}
+
+.articleBody {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 16px;
+  margin-top: 42px;
+  padding-top: 36px;
+}
+
+.articleBody h2 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.016em;
+  margin: 18px 0 0;
+}
+
+.articleBody p {
+  color: var(--read);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.27rem;
+  line-height: 1.58;
+  letter-spacing: -0.003em;
+  margin: 0;
+}
+
+/* Refined first line — a quiet literary touch that invites the reader in */
+.articleBody > p:first-of-type::first-letter {
+  color: var(--ink);
+  float: left;
+  font-size: 3.4em;
+  font-weight: 700;
+  line-height: 0.78;
+  margin: 0.04em 0.09em 0 0;
+}
+
+.articleBody h3 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  margin: 14px 0 0;
+}
+
+/* Pasted markdown demotes `###` to <h4> (single-h1 rule); style it so a
+   4th-level heading still reads as a heading — larger than the 1.27rem body,
+   smaller than h3 — instead of falling back to the ~16px browser default. */
+.articleBody h4 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 12px 0 0;
+}
+
+.articleBody a {
+  color: inherit;
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: var(--amber);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: background 0.15s;
+}
+
+.articleBody a:hover {
+  background: rgba(212, 168, 75, 0.16);
+}
+
+.articleBody strong {
+  font-weight: 700;
+}
+
+.articleBody em {
+  font-style: italic;
+}
+
+.articleBody blockquote {
+  border-left: 3px solid var(--ink);
+  color: var(--ink);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.32rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 8px 0;
+  padding: 2px 0 2px 26px;
+}
+
+.articleBody ul,
+.articleBody ol {
+  color: var(--read);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.27rem;
+  line-height: 1.7;
+  margin: 0;
+  padding-left: 28px;
+}
+
+.articleBody li {
+  margin-bottom: 10px;
+}
+
+.articleBody hr {
+  border: 0;
+  color: var(--muted);
+  height: 0;
+  margin: 48px 0;
+  overflow: visible;
+  text-align: center;
+}
+
+.articleBody hr::before {
+  content: "· · ·";
+  display: inline-block;
+  font-size: 1.5rem;
+  letter-spacing: 0.6em;
+  /* letter-spacing adds a trailing gap after the last dot; nudge right to re-center */
+  text-indent: 0.6em;
+}
+
+/* Keep embedded media inside the column on every screen width */
+.articleBody img,
+.articleBody video,
+.articleBody iframe {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.articleBody pre {
+  overflow-x: auto;
+}
+
+.articleBody table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ── Reading experience: progress, byline, end-of-article ─────── */
+
+.readingProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.readingProgressBar {
+  height: 100%;
+  background: var(--amber);
+  transition: width 0.1s linear;
+}
+
+/* Top loading bar during page-to-page navigation (see RouteProgress.tsx).
+   Sits above the reading-progress bar; only visible briefly mid-transition. */
+.routeProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--amber);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px rgba(212, 168, 75, 0.7);
+  z-index: 1100;
+  pointer-events: none;
+  transition: width 0.2s ease, opacity 0.3s ease;
+}
+
+.articleBackLink {
+  display: inline-flex;
+  margin: 0 0 8px;
+}
+
+.articleByline {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.articleBylineAvatar {
+  flex-shrink: 0;
+}
+
+.articleBylineMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.articleBylineName {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.articleBylineSub {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.articleBylineDot {
+  margin: 0 7px;
+}
+
+.articleEnd {
+  border-top: 1px solid var(--line);
+  margin-top: 56px;
+  padding-top: 44px;
+  text-align: center;
+}
+
+.articleEndMark {
+  color: var(--muted);
+  display: block;
+  font-size: 1.3rem;
+  letter-spacing: 0.4em;
+  margin-bottom: 28px;
+}
+
+.articleEndTitle {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.articleEndCopy {
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+  margin: 14px auto 0;
+  max-width: 460px;
+}
+
+.articleEndActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.articleEndSecondary {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* ── Medium-like admin: Login ────────────────────── */
+
+.mLoginPage {
+  align-items: center;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.mLoginCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 380px;
+  text-align: center;
+  width: 100%;
+}
+
+.mLoginBrand {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+  color: #1a1a1a;
+}
+
+.mLoginSub {
+  color: #6b6b6b;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 36px;
+}
+
+.mLoginError {
+  background: #fff4f4;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+}
+
+.mLoginError code {
+  background: #fce;
+  border-radius: 3px;
+  font-size: 0.85em;
+  padding: 0 4px;
+}
+
+.mLoginForm {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.mLoginForm input[type="password"] {
+  background: #f9f9f9;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 1rem;
+  height: 52px;
+  outline: none;
+  padding: 0 18px;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.mLoginForm input[type="password"]:focus {
+  border-color: #1a1a1a;
+  background: #fff;
+}
+
+.mLoginForm button[type="submit"] {
+  align-items: center;
+  background: #1a1a1a;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  gap: 8px;
+  height: 52px;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
+  width: 100%;
+}
+
+.mLoginForm button[type="submit"]:hover {
+  background: #333;
+}
+
+.mLoginBack {
+  align-items: center;
+  color: #6b6b6b;
+  display: inline-flex;
+  font-size: 0.88rem;
+  gap: 6px;
+  margin-top: 32px;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.mLoginBack:hover {
+  color: #1a1a1a;
+}
+
+/* ── Medium-like admin: Editor ───────────────────── */
+
+.mEditorPage {
+  background: #fff;
+  min-height: 100vh;
+}
+
+.mTopBar {
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mTopBarLeft {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.mTopBarAvatar {
+  flex-shrink: 0;
+}
+
+.mTopBarDraft {
+  color: #6b6b6b;
+  font-size: 0.88rem;
+}
+
+.mTopBarRight {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.mTopBarError {
+  background: #fff4f4;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c0392b;
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  margin: 0;
+}
+
+.mTopBarSignOut {
+  background: transparent;
+  border: 0;
+  color: #6b6b6b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.mTopBarSignOut:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.mBtnDraft {
+  background: #fff;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 20px;
+  color: #1a1a1a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  height: 34px;
+  padding: 0 16px;
+  transition: border-color 0.15s;
+  white-space: nowrap;
+}
+
+.mBtnDraft:hover {
+  border-color: #1a1a1a;
+}
+
+.mBtnPublish {
+  background: #1a8917;
+  border: 0;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  height: 34px;
+  padding: 0 18px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.mBtnPublish:hover {
+  background: #156912;
+}
+
+/* Writing canvas */
+.mCanvas {
+  margin: 0 auto;
+  max-width: 740px;
+  padding: 52px 24px 200px;
+}
+
+.mTitleInput {
+  background: transparent;
+  border: 0;
+  color: #1a1a1a;
+  display: block;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  outline: 0;
+  overflow: hidden;
+  padding: 4px 0;
+  resize: none;
+  width: 100%;
+}
+
+.mTitleInput::placeholder {
+  color: #c8c8c8;
+}
+
+.mSubtitleInput {
+  background: transparent;
+  border: 0;
+  color: #6b6b6b;
+  display: block;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin-top: 18px;
+  outline: 0;
+  padding: 0;
+  resize: none;
+  width: 100%;
+}
+
+.mSubtitleInput::placeholder {
+  color: #d0d0d0;
+}
+
+.mCanvasDivider {
+  border: 0;
+  border-top: 1px solid #e8e8e8;
+  margin: 30px 0;
+}
+
+/* Rich text editor body */
+.mEditor {
+  position: relative;
+}
+
+.mEditorBody {
+  color: #292929;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.27rem;
+  line-height: 1.58;
+  letter-spacing: -0.003em;
+  min-height: 320px;
+  outline: 0;
+  position: relative;
+}
+
+.mEditorBody.isEmpty::before {
+  color: #c8c8c8;
+  content: attr(data-placeholder);
+  font-style: italic;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Controlled paragraph spacing — the browser's default <p> margins are too
+   large; match the published article's rhythm. */
+.mEditorBody p {
+  margin: 0 0 16px;
+}
+
+.mEditorBody h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 32px 0 12px;
+}
+
+.mEditorBody h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 28px 0 10px;
+}
+
+.mEditorBody h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 24px 0 8px;
+}
+
+.mEditorBody blockquote {
+  border-left: 3px solid #1a1a1a;
+  color: #555;
+  font-style: italic;
+  margin: 24px 0;
+  padding: 4px 0 4px 24px;
+}
+
+.mEditorBody ul {
+  margin: 16px 0;
+  padding-left: 28px;
+}
+
+.mEditorBody li {
+  margin-bottom: 6px;
+}
+
+.mEditorBody a {
+  color: inherit;
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: #999;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.mEditorBody a:hover {
+  text-decoration-color: #1a1a1a;
+}
+
+/* Embed panel */
+.mEmbedRow {
+  margin-top: 24px;
+  min-height: 36px;
+}
+
+.mEmbedTrigger {
+  align-items: center;
+  background: transparent;
+  border: 1px dashed #d0d0d0;
+  border-radius: 8px;
+  color: #aaa;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.88rem;
+  gap: 8px;
+  padding: 8px 16px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.mEmbedTrigger:hover {
+  border-color: #888;
+  color: #555;
+}
+
+.mEmbedForm {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mEmbedInput {
+  background: #f9f9f9;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  color: #1a1a1a;
+  flex: 1;
+  font: inherit;
+  font-size: 0.92rem;
+  height: 40px;
+  min-width: 240px;
+  outline: none;
+  padding: 0 14px;
+  transition: border-color 0.15s;
+}
+
+.mEmbedInput:focus {
+  background: #fff;
+  border-color: #1a1a1a;
+}
+
+.mEmbedSubmit {
+  background: #1a1a1a;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  height: 40px;
+  padding: 0 16px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.mEmbedSubmit:hover:not(:disabled) {
+  background: #333;
+}
+
+.mEmbedSubmit:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.mEmbedCancel {
+  background: transparent;
+  border: 0;
+  color: #aaa;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0 6px;
+}
+
+.mEmbedCancel:hover {
+  color: #555;
+}
+
+.mEmbedError {
+  color: #c0392b;
+  font-size: 0.82rem;
+  width: 100%;
+}
+
+/* Link card — editor and article */
+.linkCard {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  margin: 24px 0;
+  overflow: hidden;
+  transition: border-color 0.15s;
+  user-select: none;
+}
+
+.linkCard:hover {
+  border-color: #c0c0c0;
+}
+
+.linkCardAnchor {
+  display: block;
+  text-decoration: none;
+}
+
+.linkCardBody {
+  align-items: center;
+  display: flex;
+  gap: 0;
+  min-height: 100px;
+}
+
+.linkCardText {
+  flex: 1;
+  padding: 18px 20px;
+  min-width: 0;
+}
+
+.linkCardSite {
+  color: #aaa;
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.linkCardTitle {
+  color: #1a1a1a;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 6px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.linkCardDesc {
+  color: #6b6b6b;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.linkCardImage {
+  border-left: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  height: 130px;
+  object-fit: cover;
+  width: 180px;
+}
+
+@media (max-width: 600px) {
+  .linkCardImage {
+    width: 110px;
+    height: 100px;
+  }
+}
+
+/* Floating toolbar */
+.mToolbar {
+  align-items: center;
+  background: #242424;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28), 0 10px 28px rgba(0, 0, 0, 0.22);
+  display: flex;
+  gap: 1px;
+  padding: 3px 5px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
+.mToolbar::after {
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid #242424;
+  bottom: -7px;
+  content: "";
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.mTb {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  height: 38px;
+  justify-content: center;
+  min-width: 38px;
+  padding: 0 9px;
+  transition: background 0.12s ease;
+}
+
+.mTb:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.mTb:active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Editorial serif glyphs, sized like Medium's toolbar */
+.mTbB { font-size: 1.05rem; font-weight: 800; }
+.mTbI { font-style: italic; font-weight: 500; }
+.mTbT1 { font-size: 1.3rem; font-weight: 700; }
+.mTbT2 { font-size: 0.95rem; font-weight: 700; }
+.mTbQ { font-size: 1.5rem; line-height: 1; }
+
+.mTbSep {
+  background: rgba(255, 255, 255, 0.22);
+  display: block;
+  height: 20px;
+  margin: 0 4px;
+  width: 1px;
+}
+
+.mToolbarLink {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.mToolbarLinkInput {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  min-width: 230px;
+  outline: none;
+  padding: 4px 8px;
+}
+
+.mToolbarLinkInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Admin: Post list ───────────────────────────── */
+
+.mPostList {
+  margin: 0 auto;
+  max-width: 740px;
+  padding: 48px 24px 120px;
+}
+
+.mPostListEmpty {
+  color: #6b6b6b;
+  font-size: 1rem;
+  padding: 48px 0;
+}
+
+.mPostListEmpty a {
+  color: #1a1a1a;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mPostListHeading {
+  color: #6b6b6b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+.mPostListItems {
+  border-top: 1px solid #e8e8e8;
+  list-style: none;
+  margin: 0 0 48px;
+  padding: 0;
+}
+
+.mPostListItem {
+  border-bottom: 1px solid #e8e8e8;
+  padding: 20px 0;
+}
+
+.mPostListMeta {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mPostListBadge {
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+
+.mPostListBadgeDraft {
+  background: #f5f5f5;
+  color: #6b6b6b;
+}
+
+.mPostListBadgePublished {
+  background: #e6f4e6;
+  color: #1a8917;
+}
+
+.mPostListDate {
+  color: #aaa;
+  font-size: 0.82rem;
+}
+
+.mPostListViewLink {
+  color: #aaa;
+  font-size: 0.82rem;
+  margin-left: auto;
+  text-decoration: none;
+}
+
+.mPostListViewLink:hover {
+  color: #1a1a1a;
+}
+
+.mPostListTitle {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0 0 6px;
+}
+
+.mPostListTitle a {
+  color: #1a1a1a;
+  text-decoration: none;
+}
+
+.mPostListTitle a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mPostListExcerpt {
+  color: #6b6b6b;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .mPostList {
+    padding: 32px 18px 80px;
+  }
+}
+
+/* Post settings */
+.mPostSettings {
+  border-top: 1px solid #e8e8e8;
+  margin-top: 64px;
+  padding-top: 24px;
+}
+
+.mPostSettingsTrigger {
+  color: #6b6b6b;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  list-style: none;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.mPostSettingsTrigger::-webkit-details-marker {
+  display: none;
+}
+
+.mPostSettingsTrigger::before {
+  content: "▸ ";
+}
+
+details[open] .mPostSettingsTrigger::before {
+  content: "▾ ";
+}
+
+.mPostSettingsGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 20px;
+}
+
+.mSettingLabel {
+  display: grid;
+  gap: 6px;
+}
+
+.mSettingLabel span {
+  color: #6b6b6b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mSettingLabel input {
+  background: #f9f9f9;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 0.92rem;
+  height: 40px;
+  outline: none;
+  padding: 0 12px;
+  transition: border-color 0.15s;
+}
+
+.mSettingLabel input:focus {
+  background: #fff;
+  border-color: #1a1a1a;
+}
+
+@media (max-width: 600px) {
+  .mPostSettingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mTopBar {
+    padding: 0 14px;
+  }
+
+  .mCanvas {
+    padding: 36px 18px 120px;
+  }
+
+  .mTopBarSignOut {
+    display: none;
+  }
+}
+
+.questionItem {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.questionItem summary {
+  align-items: center;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  gap: 16px;
+  justify-content: space-between;
+  line-height: 1.3;
+  list-style: none;
+  padding: 20px 24px;
+}
+
+/* Hide the default disclosure triangle (Safari/Chrome) */
+.questionItem summary::-webkit-details-marker {
+  display: none;
+}
+
+.questionItem summary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.questionText {
+  flex: 1;
+}
+
+/* Chevron drawn from two borders; points down when closed, up when open */
+.questionIcon {
+  border-bottom: 2px solid var(--muted);
+  border-right: 2px solid var(--muted);
+  flex-shrink: 0;
+  height: 9px;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  width: 9px;
+}
+
+.questionItem[open] .questionIcon {
+  transform: rotate(-135deg);
+}
+
+.questionItem p {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+  padding: 0 24px 22px;
+}
+
+.siteFooter {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  min-height: 76px;
+  padding: 20px clamp(18px, 4vw, 64px);
+}
+
+.siteFooter a {
+  color: var(--wine);
+  font-weight: 700;
+}
+
+.footerLinks {
+  display: flex;
+  gap: 18px;
+}
+
+@media (max-width: 820px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .heroGrid,
+  .section {
+    grid-template-columns: 1fr;
+  }
+
+  .heroGrid {
+    padding-top: 48px;
+  }
+
+  .coverStage {
+    justify-self: start;
+    max-width: 310px;
+  }
+
+  .bookCard,
+  .detailBand,
+  .postGrid,
+  .subscribeSection {
+    grid-template-columns: 1fr;
+  }
+
+  .bookCover {
+    max-width: 260px;
+  }
+}
+
+/* Tablet: use two columns instead of collapsing straight to one */
+@media (min-width: 600px) and (max-width: 820px) {
+  .postGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detailBand {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .navLinks {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  h1 {
+    font-size: clamp(3.4rem, 21vw, 4.6rem);
+  }
+
+  .button {
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* The hero "Latest book" CTA is wrapped in a .buyAmazon span; stretch it so
+     its button matches the full-width "View books" button beside it. */
+  .actions .buyAmazon {
+    width: 100%;
+  }
+
+  .subscribeRow {
+    grid-template-columns: 1fr;
+  }
+
+  .siteFooter {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* The long email overflows the narrow footer row; hide it on phones
+     (still reachable in the footer on tablet/desktop). */
+  .footerEmail {
+    display: none;
+  }
+}
