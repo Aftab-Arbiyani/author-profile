@@ -180,7 +180,10 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     const post = snapshot.docs[0];
 
     return post ? normalizePost(post.id, post.data() as BlogPostDocument) : null;
-  } catch {
+  } catch (err) {
+    // A thrown query usually means a missing Firestore composite index
+    // (slug + published) — surface it so a published post never silently 404s.
+    console.error("[getBlogPost]", err);
     return null;
   }
 }
@@ -196,7 +199,8 @@ export async function getBlogPostById(id: string): Promise<BlogPost | null> {
     const doc = await db.collection("blogPosts").doc(id).get();
     if (!doc.exists) return null;
     return normalizePost(doc.id, doc.data() as BlogPostDocument);
-  } catch {
+  } catch (err) {
+    console.error("[getBlogPostById]", err);
     return null;
   }
 }
@@ -206,6 +210,10 @@ export async function updateBlogPost(id: string, input: Partial<CreateBlogPostIn
 
   if (!db) {
     throw new Error("Firebase is not configured.");
+  }
+
+  if (input.slug) {
+    await assertSlugAvailable(db, input.slug, id);
   }
 
   const ref = db.collection("blogPosts").doc(id);
@@ -244,7 +252,10 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     return snapshot.docs.map((doc) =>
       normalizePost(doc.id, doc.data() as BlogPostDocument),
     );
-  } catch {
+  } catch (err) {
+    // Likely a missing composite index — surface it rather than showing an
+    // empty admin list as if there were genuinely no posts.
+    console.error("[getAllBlogPosts]", err);
     return [];
   }
 }
@@ -293,12 +304,43 @@ export async function addSubscriber(
   }
 }
 
+/** Thrown when a create/update would collide with an existing post's slug. */
+export class SlugTakenError extends Error {
+  constructor(slug: string) {
+    super(`A post with the slug "${slug}" already exists.`);
+    this.name = "SlugTakenError";
+  }
+}
+
+/**
+ * Guards slug uniqueness. Two posts sharing a slug would make `/blog/[slug]`
+ * serve an arbitrary one and mis-route view counts, so creation/rename must
+ * reject a duplicate. `ignoreId` lets an edit keep its own slug.
+ */
+async function assertSlugAvailable(
+  db: ReturnType<typeof getFirestore>,
+  slug: string,
+  ignoreId?: string,
+) {
+  const snapshot = await db
+    .collection("blogPosts")
+    .where("slug", "==", slug)
+    .limit(1)
+    .get();
+  const clash = snapshot.docs[0];
+  if (clash && clash.id !== ignoreId) {
+    throw new SlugTakenError(slug);
+  }
+}
+
 export async function createBlogPost(input: CreateBlogPostInput) {
   const db = getFirebaseDb();
 
   if (!db) {
     throw new Error("Firebase is not configured.");
   }
+
+  await assertSlugAvailable(db, input.slug);
 
   const now = Timestamp.now();
 
@@ -310,7 +352,11 @@ export async function createBlogPost(input: CreateBlogPostInput) {
     contentHtml: input.contentHtml,
     coverUrl: input.coverUrl ?? "",
     published: input.published,
-    publishedAt: now,
+    // Only stamp a publish date when actually publishing. Drafts store null so
+    // that publishing later (see updateBlogPost) records the true publish time
+    // instead of the draft-creation time. null still keeps the document in
+    // `orderBy("publishedAt")` results, so the admin drafts list is unaffected.
+    publishedAt: input.published ? now : null,
     createdAt: now,
     updatedAt: now,
   });

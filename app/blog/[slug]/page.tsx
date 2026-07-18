@@ -48,6 +48,8 @@ export async function generateMetadata({
       canonical: `/blog/${slug}`,
     },
     openGraph: {
+      siteName: "Aftab Arbiyani",
+      locale: "en_US",
       title: post.title,
       description,
       url: `/blog/${slug}`,
@@ -83,7 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "@id": postUrl,
+    "@id": `${postUrl}#article`,
     mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
     headline: post.title,
     description: metaDescription(post),

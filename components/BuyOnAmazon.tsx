@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   MARKETPLACES,
-  storeByCode,
   storeUrl,
   STORE_STORAGE_KEY as STORAGE_KEY,
   STORE_EVENT,
@@ -60,7 +59,6 @@ export function BuyOnAmazon({
     window.dispatchEvent(new CustomEvent(STORE_EVENT, { detail: next }));
   }
 
-  const store = storeByCode(code);
   const href = storeUrl(code, asin);
   const className = variant === "bare" ? undefined : `button ${variant}`;
 
@@ -68,7 +66,6 @@ export function BuyOnAmazon({
     <span className="buyAmazon">
       <a className={className} href={href} target="_blank" rel={AMAZON_LINK_REL}>
         {label}
-        {showSwitcher ? <span className="buyAmazonTld">{store.tld}</span> : null}
       </a>
       {showSwitcher ? (
         <label className="buyAmazonSwitch">

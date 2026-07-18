@@ -3,7 +3,8 @@ import { RichTextEditor } from "@/components/RichTextEditor";
 import { TitleField } from "@/components/TitleField";
 import { BrandMark } from "@/components/BrandMark";
 import { isAdminAuthenticated, logoutAdmin } from "@/lib/admin-auth";
-import { getBlogPostById, updateBlogPost } from "@/lib/firestore";
+import { getBlogPostById, updateBlogPost, SlugTakenError } from "@/lib/firestore";
+import { sanitizeEditorHtml } from "@/lib/sanitize";
 
 type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ status?: string }> };
 
@@ -33,6 +34,12 @@ export default async function EditBlogPage({ params, searchParams }: Props) {
 
         {status === "missing-config" && (
           <p className="mTopBarError">Firebase or admin secret is not configured.</p>
+        )}
+        {status === "slug-taken" && (
+          <p className="mTopBarError">
+            That slug is already used by another post. Choose a different one in
+            Post settings.
+          </p>
         )}
 
         <div className="mTopBarRight">
@@ -94,7 +101,7 @@ async function updatePostAction(id: string, formData: FormData) {
   const title = str(formData, "title");
   const slug = str(formData, "slug") || slugify(title);
   const excerpt = str(formData, "excerpt");
-  const rawHtml = sanitize(str(formData, "contentHtml"));
+  const rawHtml = sanitizeEditorHtml(str(formData, "contentHtml"));
   const content = rawHtml
     .replace(/<[^>]+>/g, "\n")
     .split("\n")
@@ -106,7 +113,10 @@ async function updatePostAction(id: string, formData: FormData) {
 
   try {
     await updateBlogPost(id, { title, slug, excerpt, content, contentHtml: rawHtml, coverUrl, published });
-  } catch {
+  } catch (err) {
+    if (err instanceof SlugTakenError) {
+      redirect(`/admin/blog/${id}/edit?status=slug-taken`);
+    }
     redirect(`/admin/blog/${id}/edit?status=missing-config`);
   }
 
@@ -125,12 +135,4 @@ function str(fd: FormData, key: string) {
 
 function slugify(v: string) {
   return v.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-}
-
-function sanitize(v: string) {
-  return v
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-    .replace(/\son\w+="[^"]*"/gi, "")
-    .replace(/\son\w+='[^']*'/gi, "")
-    .replace(/\shref=["']javascript:[^"']*["']/gi, "");
 }
