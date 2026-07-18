@@ -4,25 +4,43 @@ import { getBlogPosts } from "@/lib/firestore";
 const BASE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.aftabarbiyani.com";
 
+// Stable last-modified for the static pages. Bump this when their content
+// actually changes — stamping `new Date()` on every build makes `lastmod`
+// noise that crawlers learn to ignore. Blog posts use their real updatedAt.
+const STATIC_LASTMOD = new Date("2026-07-18");
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: BASE_URL,
-      lastModified: new Date(),
+      // Trailing slash to match the resolved home canonical.
+      url: `${BASE_URL}/`,
+      lastModified: STATIC_LASTMOD,
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/about`,
-      lastModified: new Date(),
+      lastModified: STATIC_LASTMOD,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${BASE_URL}/blog`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/books/the-probationers`,
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/press`,
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
   ];
 

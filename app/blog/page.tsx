@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     canonical: "/blog",
   },
   openGraph: {
+    siteName: "Aftab Arbiyani",
+    locale: "en_US",
     title: "Blog: Essays & Craft Notes | Aftab Arbiyani",
     description:
       "Essays, craft notes, launch updates, and reading letters from psychological mystery writer Aftab Arbiyani.",

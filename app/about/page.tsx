@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     canonical: "/about",
   },
   openGraph: {
+    siteName: "Aftab Arbiyani",
+    locale: "en_US",
     title: "About Aftab Arbiyani",
     description:
       "Psychological mystery writer and software engineer based in India, author of the debut novel The Probationers.",
@@ -45,8 +47,11 @@ const personJsonLd = {
   url: "https://www.aftabarbiyani.com",
   jobTitle: "Author",
   description:
-    "Aftab Arbiyani is a psychological mystery writer and software engineer based in India, author of the debut novel The Probationers.",
-  sameAs: ["https://www.amazon.com/dp/B0GX33TZC3"],
+    "Aftab Arbiyani is a psychological mystery writer and software engineer based in India, and the author of the debut novel The Probationers, a snowbound abbey murder mystery about faith, exile, and secrecy.",
+  sameAs: [
+    "https://www.amazon.com/dp/B0GX33TZC3",
+    "https://www.goodreads.com/author/show/70322137.Aftab_Arbiyani",
+  ],
   alumniOf: {
     "@type": "CollegeOrUniversity",
     name: "Government Engineering College, Bhavnagar",
@@ -136,22 +141,41 @@ export default async function AboutPage() {
         </div>
         <div className="prose">
           <p>
-            Aftab Arbiyani is a software engineer and technical lead based in
-            India, who spends his days architecting systems and his nights
-            building the kind of puzzles that can&apos;t be solved with code.
+            By day, Aftab Arbiyani builds software. He is a technical lead based
+            in India, with more than five years spent designing and building
+            large-scale backend systems, and he leads engineering work at
+            SolGuruz. He studied Computer Engineering at Government Engineering
+            College, Bhavnagar.
           </p>
           <p>
-            He has spent more than five years designing and building large-scale
-            backend systems, and today leads engineering work at SolGuruz. He
-            studied Computer Engineering at Government Engineering College,
-            Bhavnagar.
+            By night, he writes the kind of puzzle that can&apos;t be solved with
+            code. <em>The Probationers</em> is his debut novel, and a second
+            mystery is already finding its way to the page.
+          </p>
+        </div>
+      </section>
+
+      <section className="section">
+        <div>
+          <p className="eyebrow">Why mysteries</p>
+          <h2>The same instincts, a different kind of system.</h2>
+        </div>
+        <div className="prose">
+          <p>
+            A good mystery and a good piece of software are built from the same
+            materials: a closed system, a hidden logic, and the way a single
+            constraint changes everything downstream. Years of tracing how
+            sealed systems behave under pressure, and where their quiet failure
+            points hide, turn out to be unlikely but useful training for a
+            locked-room murder.
           </p>
           <p>
-            The same instincts that make good software (closed systems, hidden
-            logic, and the way a single constraint changes everything
-            downstream) are the ones he brings to a locked-room mystery.
+            It is why his fiction keeps returning to closed, self-contained
+            worlds, and to the private bargains people make to stay inside them.
+            He writes for readers who believe a mystery should earn its ending:
+            every clue on the page, and a solution that feels inevitable only
+            once you have seen it.
           </p>
-          <p>He writes for readers who believe a mystery should earn its ending.</p>
         </div>
       </section>
 
@@ -162,18 +186,11 @@ export default async function AboutPage() {
         </div>
         <div className="prose">
           <p>
-            His debut novel is a murder mystery set inside a snowbound Benedictine
-            monastery in the Umbrian hills, where six novices, one body, and
-            sixty-four years of buried secrets converge. It draws on his long
-            fascination with closed systems, hidden logic, and the question of
-            what a person will do to stay inside the life they have built for
-            themselves.
-          </p>
-          <p>
-            At the Abbazia di San Gerolamo, the Great Silence should protect the
-            life of the community. Instead, it hides a murder. Sister Aude Bellamy
-            arrives to separate accident from intention, obedience from fear, and
-            confession from survival.
+            His debut is a murder mystery set inside a snowbound Benedictine
+            monastery in the Umbrian hills: six novices, one body, and
+            sixty-four years of buried secrets. When the novice master is found
+            dead beneath the bell tower, Sister Aude Bellamy must separate
+            accident from intention before the snow clears.
           </p>
           <div className="actions">
             <BuyOnAmazon
@@ -183,8 +200,8 @@ export default async function AboutPage() {
               showSwitcher={false}
               label="Read The Probationers"
             />
-            <Link className="button secondary" href="/#books">
-              View books
+            <Link className="button secondary" href="/books/the-probationers">
+              Full synopsis &amp; details
             </Link>
           </div>
         </div>
@@ -197,9 +214,12 @@ export default async function AboutPage() {
         </div>
         <div className="prose">
           <p>
-            New readers should start with <em>The Probationers</em>, a snowbound
-            monastery mystery built around a murder beneath a bell tower. Another
-            mystery is slowly finding its way to the page.
+            New readers should start with{" "}
+            <Link className="textLink" href="/books/the-probationers">
+              <em>The Probationers</em>
+            </Link>
+            , a snowbound monastery mystery built around a murder beneath a bell
+            tower. Another mystery is slowly finding its way to the page.
           </p>
           <p>
             For essays, craft notes, and launch updates, read the{" "}

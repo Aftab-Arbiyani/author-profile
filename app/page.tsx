@@ -9,6 +9,15 @@ import { detectStoreCode } from "@/lib/detect-store";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandMark } from "@/components/BrandMark";
 import { jsonLdScript } from "@/lib/jsonld";
+import {
+  REVIEWS,
+  AVERAGE_RATING,
+  REVIEW_COUNT,
+  BEST_RATING,
+  aggregateRatingJsonLd,
+  starString,
+  formatReviewMonth,
+} from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "Aftab Arbiyani | Author of Psychological Mystery Fiction",
@@ -18,6 +27,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
+    siteName: "Aftab Arbiyani",
+    locale: "en_US",
     title: "Aftab Arbiyani | Psychological Mystery Author",
     description:
       "Debut mystery novel The Probationers: six postulants, one snowbound abbey, a murder beneath the bell tower.",
@@ -47,8 +58,11 @@ const personJsonLd = {
   name: "Aftab Arbiyani",
   url: "https://www.aftabarbiyani.com",
   description:
-    "Aftab Arbiyani is a psychological mystery writer whose debut novel The Probationers is a snowbound abbey murder mystery about faith, exile, and secrecy.",
-  sameAs: ["https://www.amazon.com/dp/B0GX33TZC3"],
+    "Aftab Arbiyani is a psychological mystery writer and software engineer based in India, and the author of the debut novel The Probationers, a snowbound abbey murder mystery about faith, exile, and secrecy.",
+  sameAs: [
+    "https://www.amazon.com/dp/B0GX33TZC3",
+    "https://www.goodreads.com/author/show/70322137.Aftab_Arbiyani",
+  ],
   jobTitle: "Author",
   email: "aftabarbiyani@gmail.com",
 };
@@ -69,18 +83,19 @@ const bookJsonLd = {
   "@type": "Book",
   "@id": "https://www.aftabarbiyani.com/#book-the-probationers",
   name: "The Probationers",
-  url: "https://www.amazon.com/dp/B0GX33TZC3",
+  // Point at the on-site book page (canonical), not Amazon — the detailed
+  // per-edition markup (Kindle + paperback) lives there via workExample.
+  url: "https://www.aftabarbiyani.com/books/the-probationers",
   author: { "@id": "https://www.aftabarbiyani.com/#person" },
-  isbn: "9798197795472",
-  bookFormat: "https://schema.org/Paperback",
   genre: "Psychological Mystery",
+  inLanguage: "en",
+  datePublished: "2026-05-15",
+  image: "https://www.aftabarbiyani.com/the-probationers-cover.jpeg",
   description:
-    "Six postulants. One snowbound abbey. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion.",
-  offers: {
-    "@type": "Offer",
-    url: "https://www.amazon.com/dp/B0GX33TZC3",
-    availability: "https://schema.org/InStock",
-  },
+    "Six postulants. One snowbound Benedictine abbey in the Umbrian hills. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion. A locked-room mystery about faith, belonging, and the private bargains people make to remain inside the worlds they love.",
+  aggregateRating: aggregateRatingJsonLd,
+  // Purchase data (per-edition offers) lives once on the book page's Book node
+  // via workExample; this home node is a lightweight reference to the same @id.
 };
 
 const questions = [
@@ -90,14 +105,29 @@ const questions = [
       "Psychological mystery fiction about faith, exile, secrecy, and the private bargains people make to remain inside the worlds they love.",
   },
   {
+    question: "What is The Probationers about?",
+    answer:
+      "The Probationers is a closed-circle mystery set across seven snowbound days in a Benedictine enclosure in the Umbrian hills. A priest is found dead at the base of the bell tower, and a canon lawyer is sent from Rome to find out what happened before the civil authorities arrive. She has seven days, and six novices.",
+  },
+  {
     question: "Where should new readers begin?",
     answer:
       "Start with The Probationers, a snowbound monastery mystery built around a murder beneath a bell tower.",
   },
   {
+    question: "Is The Probationers available in paperback and ebook?",
+    answer:
+      "Yes. The Probationers is available on Amazon as a Kindle ebook and a 361-page paperback, and it ships internationally.",
+  },
+  {
     question: "Will there be more books?",
     answer:
-      "Yes. This profile is designed to grow into a wider author catalogue as future books are released.",
+      "Yes. Another mystery is already finding its way to the page, and this profile will grow into a wider author catalogue as future books are released.",
+  },
+  {
+    question: "How can I get updates on new books?",
+    answer:
+      "Join the reader newsletter for occasional notes on new books, essays, and launch news, or follow the blog for craft notes and updates.",
   },
 ];
 
@@ -124,12 +154,13 @@ const details = [
 const books = [
   {
     title: "The Probationers",
-    status: "Available now",
-    genre: "Murder Mystery / Whodunit",
+    status: "Available now · Kindle & paperback",
+    genre: "Psychological Murder Mystery / Whodunit",
     description:
       "Six postulants. One snowbound abbey. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion.",
     asin: "B0GX33TZC3",
     sampleUrl: "https://read.amazon.com/sample/B0GX33TZC3?clientId=share",
+    detailUrl: "/books/the-probationers",
   },
 ];
 
@@ -174,8 +205,11 @@ export default async function Home() {
             <p className="eyebrow">Author of psychological mystery fiction</p>
             <h1>Aftab Arbiyani</h1>
             <p className="lede">
-              Stories of belonging, exile, faith, and silence, where the crime
-              is only the first door into what people are desperate to protect.
+              A closed-circle mystery set across seven snowbound days in a
+              Benedictine enclosure in the Umbrian hills. A priest is found dead
+              at the base of the bell tower. A canon lawyer is sent from Rome to
+              find out what happened before the civil authorities arrive. She has
+              seven days, and six novices.
             </p>
             <div className="actions">
               <BuyOnAmazon
@@ -183,7 +217,7 @@ export default async function Home() {
                 initialCode={storeCode}
                 variant="primary"
                 showSwitcher={false}
-                label="Latest book"
+                label="Get The Probationers"
               />
               <a className="button secondary" href="#books">
                 View books
@@ -260,11 +294,12 @@ export default async function Home() {
               </div>
               <div className="bookInfo">
                 <span>{book.status}</span>
-                <h3>{book.title}</h3>
+                <h3>
+                  <Link href={book.detailUrl}>{book.title}</Link>
+                </h3>
                 <p className="bookGenre">{book.genre}</p>
                 <p>{book.description}</p>
                 <div className="bookMeta">
-                  <span>ASIN {book.asin}</span>
                   <BuyOnAmazon
                     asin={book.asin}
                     initialCode={storeCode}
@@ -274,6 +309,9 @@ export default async function Home() {
                   />
                 </div>
                 <SamplePreview sampleUrl={book.sampleUrl} title={book.title} />
+                <Link className="textLink" href={book.detailUrl}>
+                  Full details &amp; synopsis →
+                </Link>
               </div>
             </article>
           ))}
@@ -301,6 +339,44 @@ export default async function Home() {
           arrives to separate accident from intention, obedience from fear, and
           confession from survival.
         </p>
+        <Link className="textLink" href="/books/the-probationers">
+          More about The Probationers →
+        </Link>
+      </section>
+
+      <section className="section split" id="reviews">
+        <div>
+          <p className="eyebrow">Reader reviews</p>
+          <h2>Five stars from early readers.</h2>
+          <p
+            className="ratingSummary"
+            aria-label={`Rated ${AVERAGE_RATING} out of ${BEST_RATING} from ${REVIEW_COUNT} verified reviews`}
+          >
+            <span className="ratingStars" aria-hidden="true">
+              {starString(AVERAGE_RATING)}
+            </span>
+            {AVERAGE_RATING.toFixed(1)} · {REVIEW_COUNT} verified reviews
+          </p>
+        </div>
+        <div className="prose">
+          <div className="reviewList">
+            {REVIEWS.map((r) => (
+              <figure className="reviewCard" key={r.name}>
+                <div className="reviewStars" aria-hidden="true">
+                  {starString(r.rating)}
+                </div>
+                <p className="reviewTitle">{r.title}</p>
+                <blockquote className="reviewQuote">{r.body}</blockquote>
+                <figcaption className="reviewMeta">
+                  {r.name} · Verified purchase · {formatReviewMonth(r.date)}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <Link className="textLink" href="/books/the-probationers#reviews">
+            More about the book →
+          </Link>
+        </div>
       </section>
 
       <section className="blogPreview" id="blog">
@@ -346,7 +422,7 @@ export default async function Home() {
       <section className="subscribeSection" id="subscribe">
         <div>
           <p className="eyebrow">Newsletter</p>
-          <h2>Get new-book news, essays, and subscriber-only offers.</h2>
+          <h2>Get early access to the next mystery.</h2>
         </div>
         <SubscribeForm />
       </section>

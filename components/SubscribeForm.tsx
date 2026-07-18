@@ -109,7 +109,9 @@ export function SubscribeForm() {
         </p>
       ) : (
         <p>
-          Occasional notes on new books, essays, launch news, and reader extras.
+          Join the reader list for early access to the next novel, launch-day
+          news, and the first word on deals and discounts, plus the occasional
+          note from the writing desk.
         </p>
       )}
     </form>

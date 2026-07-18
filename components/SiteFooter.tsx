@@ -15,17 +15,25 @@ export async function SiteFooter() {
 
   return (
     <footer className="siteFooter">
-      <span>(c) 2026 Aftab Arbiyani</span>
+      <span>&copy; 2026 Aftab Arbiyani</span>
       <div className="footerLinks">
         <Link href="/">Home</Link>
         <Link href="/about">About</Link>
         <Link href="/blog">Blog</Link>
+        <Link href="/press">Press</Link>
         <a
           href={storeUrl(storeCode, "B0GX33TZC3")}
           target="_blank"
           rel={AMAZON_LINK_REL}
         >
           Amazon
+        </a>
+        <a
+          href="https://www.goodreads.com/author/show/70322137.Aftab_Arbiyani"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Goodreads
         </a>
         <a className="footerEmail" href="mailto:aftabarbiyani@gmail.com">
           aftabarbiyani@gmail.com
