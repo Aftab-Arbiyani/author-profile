@@ -15,6 +15,11 @@ export function RichTextEditor({ initialHtml = "" }: { initialHtml?: string }) {
   const [tb, setTb] = useState<ToolbarPos>({ top: 0, left: 0, visible: false });
   const [linkMode, setLinkMode] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const [addBtn, setAddBtn] = useState<ToolbarPos>({
+    top: 0,
+    left: 0,
+    visible: false,
+  });
 
   const refreshToolbar = useCallback(() => {
     // While the link input is open, keep the toolbar pinned — focusing the
@@ -33,10 +38,62 @@ export function RichTextEditor({ initialHtml = "" }: { initialHtml?: string }) {
     setTb({ top: rect.top - 56, left: rect.left + rect.width / 2, visible: true });
   }, []);
 
+  // Resolve the top-level block element the caret currently sits in (a direct
+  // child of the editor: <p>, <h2>, etc.). Returns null if the caret is outside.
+  const currentBlock = useCallback((): HTMLElement | null => {
+    const editor = editorRef.current;
+    const sel = window.getSelection();
+    if (!editor || !sel || sel.rangeCount === 0) return null;
+    const anchor = sel.anchorNode;
+    if (!anchor || !editor.contains(anchor)) return null;
+    let node: Node | null = anchor;
+    while (node && node.parentNode && node.parentNode !== editor) {
+      node = node.parentNode;
+    }
+    return node && node.parentNode === editor && node.nodeType === 1
+      ? (node as HTMLElement)
+      : null;
+  }, []);
+
+  // Medium-style "+" affordance: show a floating add button in the left margin
+  // whenever the caret rests on an empty line, so the author can insert a
+  // section break there.
+  const refreshAddButton = useCallback(() => {
+    const sel = window.getSelection();
+    const block = currentBlock();
+    if (
+      !sel ||
+      !sel.isCollapsed ||
+      !block ||
+      block.tagName === "HR" ||
+      (block.textContent ?? "").trim()
+    ) {
+      setAddBtn((s) => (s.visible ? { ...s, visible: false } : s));
+      return;
+    }
+    const r = block.getBoundingClientRect();
+    setAddBtn({
+      top: r.top + r.height / 2,
+      left: Math.max(12, r.left - 44),
+      visible: true,
+    });
+  }, [currentBlock]);
+
   useEffect(() => {
-    document.addEventListener("selectionchange", refreshToolbar);
-    return () => document.removeEventListener("selectionchange", refreshToolbar);
-  }, [refreshToolbar]);
+    const onSelectionChange = () => {
+      refreshToolbar();
+      refreshAddButton();
+    };
+    document.addEventListener("selectionchange", onSelectionChange);
+    // Position is viewport-relative (position: fixed), so recompute on scroll/resize.
+    window.addEventListener("scroll", refreshAddButton, true);
+    window.addEventListener("resize", refreshAddButton);
+    return () => {
+      document.removeEventListener("selectionchange", onSelectionChange);
+      window.removeEventListener("scroll", refreshAddButton, true);
+      window.removeEventListener("resize", refreshAddButton);
+    };
+  }, [refreshToolbar, refreshAddButton]);
 
   useEffect(() => {
     const el = editorRef.current;
@@ -62,6 +119,40 @@ export function RichTextEditor({ initialHtml = "" }: { initialHtml?: string }) {
     if (!el) return;
     el.classList.toggle("isEmpty", !el.innerText.trim());
     setHtml(el.innerHTML);
+    refreshAddButton();
+  }
+
+  // Insert a section break (·  ·  ·) at the caret. Replaces the current empty
+  // line with an <hr> + a fresh paragraph, then drops the caret into it.
+  function insertSectionBreak() {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.focus();
+    const sel = window.getSelection();
+    if (!sel) return;
+
+    const block = currentBlock();
+    const hr = document.createElement("hr");
+    const para = document.createElement("p");
+    para.appendChild(document.createElement("br"));
+
+    if (block && !(block.textContent ?? "").trim()) {
+      block.replaceWith(hr, para);
+    } else if (block) {
+      block.after(hr, para);
+    } else {
+      editor.appendChild(hr);
+      editor.appendChild(para);
+    }
+
+    const range = document.createRange();
+    range.setStart(para, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    setAddBtn((s) => ({ ...s, visible: false }));
+    syncHtml();
   }
 
   function saveSelection() {
@@ -180,6 +271,27 @@ export function RichTextEditor({ initialHtml = "" }: { initialHtml?: string }) {
             </>
           )}
         </div>
+      )}
+
+      {addBtn.visible && (
+        <button
+          type="button"
+          className="mAddBlock"
+          title="Add a section break"
+          aria-label="Add a section break"
+          style={{ top: addBtn.top, left: addBtn.left }}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={insertSectionBreak}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path
+              d="M9 3.75v10.5M3.75 9h10.5"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
       )}
 
       <div
