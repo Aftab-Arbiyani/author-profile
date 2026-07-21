@@ -130,7 +130,7 @@ export default async function BlogPage() {
                 <h2>
                   <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                 </h2>
-                <p>{post.excerpt}</p>
+                <p className="postExcerpt">{post.excerpt}</p>
                 <Link className="textLink" href={`/blog/${post.slug}`}>
                   Read post
                 </Link>

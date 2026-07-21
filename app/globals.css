@@ -605,7 +605,10 @@ h1 {
 .postGrid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(3, 1fr);
+  /* auto-fit + minmax lets the row fill the available width: with a full set
+     of posts it lands on 3 columns, but with only one or two it stretches them
+     to fill instead of leaving an empty trailing column. */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .postCard,
@@ -614,6 +617,14 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 24px;
+}
+
+/* Flex column so, regardless of how long a title or excerpt runs, the "Read
+   post" CTA pins to the bottom edge — keeping every card's CTA on the same
+   baseline when the grid stretches them to equal height. */
+.postCard {
+  display: flex;
+  flex-direction: column;
 }
 
 .postCard h2,
@@ -634,6 +645,16 @@ h1 {
   margin: 0;
 }
 
+/* Clamp the excerpt to keep card bodies a uniform height; the CTA below then
+   sits on a consistent line across the row. */
+.postExcerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
 .postDate {
   color: var(--wine) !important;
   font-size: 0.82rem;
@@ -648,6 +669,14 @@ h1 {
   display: inline-flex;
   font-weight: 700;
   margin-top: 22px;
+}
+
+/* In a card, push the CTA to the bottom; keep a guaranteed gap above it via
+   padding since `margin-top: auto` can collapse to zero when content is tall. */
+.postCard .textLink {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 22px;
 }
 
 /* On the dark hero, .textLink is used inline inside body copy (e.g. the press
@@ -785,6 +814,7 @@ h1 {
 
 .postCardCover {
   border-radius: 4px;
+  flex-shrink: 0;
   height: 180px;
   margin: -24px -24px 20px;
   overflow: hidden;
