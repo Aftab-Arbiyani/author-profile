@@ -400,7 +400,7 @@ export default async function Home() {
                 <h3>
                   <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                 </h3>
-                <p>{post.excerpt}</p>
+                <p className="postExcerpt">{post.excerpt}</p>
               </article>
             ))}
           </div>
