@@ -42,6 +42,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    {
+      // Only the ARC landing page is crawlable. The library, reader, review,
+      // sign-in and verify routes are noindex + disallowed in robots.ts.
+      url: `${BASE_URL}/arc`,
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
   ];
 
   let postRoutes: MetadataRoute.Sitemap = [];

@@ -1,11 +1,15 @@
 /**
- * Verified reader reviews for The Probationers, sourced from Amazon.
+ * Reader reviews for the books, from two sources: verified Amazon purchases
+ * (hardcoded below) and approved ARC reader reviews (Firestore).
  *
  * Shared by the homepage and the book page so the visible quotes and the
  * schema.org Review / AggregateRating markup stay in one place and never drift.
- * Only add real, attributable reviews here — the rating summary and structured
- * data are derived from this list, so a fabricated entry would be a fake rating.
+ * Only real, attributable reviews feed this — the rating summary and structured
+ * data are derived from the merged list, so a fabricated entry would be a fake
+ * rating. ARC reviews only ever reach here after the author approves them.
  */
+import { getApprovedArcReviews } from "@/lib/arc";
+
 export type Review = {
   /** Reviewer's display name as shown on the public review. */
   name: string;
@@ -18,6 +22,9 @@ export type Review = {
   /** Review text. */
   body: string;
 };
+
+/** A merged review, tagged with where it came from so cards can label it honestly. */
+export type PublicReview = Review & { source: "amazon" | "arc" };
 
 export const REVIEWS: Review[] = [
   {
@@ -38,36 +45,6 @@ export const REVIEWS: Review[] = [
 
 export const BEST_RATING = 5;
 
-/** Average rating rounded to one decimal, derived from REVIEWS. */
-export const AVERAGE_RATING =
-  Math.round(
-    (REVIEWS.reduce((sum, r) => sum + r.rating, 0) / REVIEWS.length) * 10,
-  ) / 10;
-
-export const REVIEW_COUNT = REVIEWS.length;
-
-/** schema.org AggregateRating derived from the real reviews above. */
-export const aggregateRatingJsonLd = {
-  "@type": "AggregateRating",
-  ratingValue: AVERAGE_RATING,
-  bestRating: BEST_RATING,
-  reviewCount: REVIEW_COUNT,
-};
-
-/** schema.org Review[] derived from the real reviews above. */
-export const reviewsJsonLd = REVIEWS.map((r) => ({
-  "@type": "Review",
-  author: { "@type": "Person", name: r.name },
-  datePublished: r.date,
-  name: r.title,
-  reviewBody: r.body,
-  reviewRating: {
-    "@type": "Rating",
-    ratingValue: r.rating,
-    bestRating: BEST_RATING,
-  },
-}));
-
 /** "★★★★★" style string for a whole-star rating. */
 export function starString(rating: number): string {
   const full = Math.round(rating);
@@ -80,4 +57,109 @@ export function formatReviewMonth(iso: string): string {
     month: "long",
     year: "numeric",
   }).format(new Date(iso));
+}
+
+/**
+ * Shortens an ARC reader's name to first name + last initial ("Priya S."),
+ * which is what the review form promises them. Amazon reviews keep the display
+ * name the reviewer already made public on Amazon.
+ */
+function abbreviateName(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length === 0) return "ARC reader";
+  if (parts.length === 1) return parts[0];
+
+  return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
+}
+
+export type BookReviews = {
+  /** Newest first, ARC and Amazon reviews merged. */
+  reviews: PublicReview[];
+  averageRating: number;
+  reviewCount: number;
+  /**
+   * schema.org AggregateRating / Review[], or undefined when there are no
+   * reviews at all — an aggregateRating with reviewCount 0 is invalid markup.
+   */
+  aggregateRatingJsonLd?: {
+    "@type": "AggregateRating";
+    ratingValue: number;
+    bestRating: number;
+    reviewCount: number;
+  };
+  reviewsJsonLd?: Record<string, unknown>[];
+};
+
+/**
+ * Merges the hardcoded Amazon reviews with the author-approved ARC reviews for
+ * one book, and derives everything the pages and structured data need.
+ *
+ * `getApprovedArcReviews` returns [] when Firestore is unconfigured or the
+ * query fails, so with no Firebase this degrades to exactly the hardcoded
+ * output — a build without credentials still ships correct markup.
+ */
+export async function getBookReviews(bookSlug: string): Promise<BookReviews> {
+  const arcReviews = await getApprovedArcReviews(bookSlug);
+
+  const merged: PublicReview[] = [
+    ...REVIEWS.map((review) => ({ ...review, source: "amazon" as const })),
+    ...arcReviews.map((review) => ({
+      name: abbreviateName(review.name),
+      title: review.title,
+      // The publish date is when the author approved it; fall back to submission.
+      date: review.approvedAt || review.submittedAt,
+      rating: review.rating,
+      body: review.body,
+      source: "arc" as const,
+    })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  const reviewCount = merged.length;
+
+  if (reviewCount === 0) {
+    return { reviews: [], averageRating: 0, reviewCount: 0 };
+  }
+
+  const averageRating =
+    Math.round(
+      (merged.reduce((sum, r) => sum + r.rating, 0) / reviewCount) * 10,
+    ) / 10;
+
+  return {
+    reviews: merged,
+    averageRating,
+    reviewCount,
+    aggregateRatingJsonLd: {
+      "@type": "AggregateRating",
+      ratingValue: averageRating,
+      bestRating: BEST_RATING,
+      reviewCount,
+    },
+    reviewsJsonLd: merged.map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.name },
+      datePublished: r.date,
+      name: r.title,
+      reviewBody: r.body,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: BEST_RATING,
+      },
+    })),
+  };
+}
+
+/**
+ * Label shown under a review card, so the source is never misrepresented.
+ *
+ * ARC reviewers received the book free, which is a material connection the
+ * reader is entitled to know about (FTC endorsement guides) — so the label says
+ * so plainly rather than hiding behind the "ARC" abbreviation.
+ */
+export function reviewSourceLabel(source: PublicReview["source"]): string {
+  return source === "amazon"
+    ? "Verified purchase"
+    : "Received a free advance copy";
 }

@@ -48,7 +48,7 @@ function hasFirebaseConfig() {
   );
 }
 
-function getFirebaseDb() {
+export function getFirebaseDb() {
   if (!hasFirebaseConfig()) {
     return null;
   }
@@ -66,7 +66,7 @@ function getFirebaseDb() {
   return getFirestore();
 }
 
-function normalizeDate(value?: Timestamp | Date | string) {
+export function normalizeDate(value?: Timestamp | Date | string) {
   if (!value) {
     return "";
   }

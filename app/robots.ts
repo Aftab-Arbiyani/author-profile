@@ -9,7 +9,18 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        // `/arc` itself stays crawlable — it's a public landing page. Everything
+        // behind the reader session is disallowed: the manuscript must never be
+        // indexed, and sign-in/verify pages have no search value.
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/arc/library",
+          "/arc/read/",
+          "/arc/review/",
+          "/arc/signin",
+          "/arc/verify",
+        ],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { TitleField } from "@/components/TitleField";
@@ -26,11 +27,11 @@ export default async function EditBlogPage({ params, searchParams }: Props) {
     <main className="mEditorPage">
       <form id="logoutForm" action={logoutAction} aria-hidden style={{ display: "none" }} />
 
-      <header className="mTopBar">
-        <div className="mTopBarLeft">
+      <header className="mTopBar mTopBarEditor">
+        <Link href="/admin/blog" className="mTopBarLeft mTopBarHome">
           <BrandMark size={32} className="mTopBarAvatar" />
           <span className="mTopBarDraft">{post.published ? "Published" : "Draft"}</span>
-        </div>
+        </Link>
 
         {status === "missing-config" && (
           <p className="mTopBarError">Firebase or admin secret is not configured.</p>

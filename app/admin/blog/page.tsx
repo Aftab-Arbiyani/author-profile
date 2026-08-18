@@ -21,15 +21,15 @@ export default async function AdminBlogPage() {
       <form id="logoutForm" action={logoutAction} aria-hidden style={{ display: "none" }} />
 
       <header className="mTopBar">
-        <div className="mTopBarLeft">
+        <Link href="/admin" className="mTopBarLeft mTopBarHome">
           <BrandMark size={32} className="mTopBarAvatar" />
           <span className="mTopBarDraft">Posts</span>
-        </div>
+        </Link>
         <div className="mTopBarRight">
           <button type="submit" form="logoutForm" className="mTopBarSignOut">
             Sign out
           </button>
-          <Link href="/admin/blog/new" className="mBtnPublish" style={{ display: "inline-flex", alignItems: "center", height: 34, padding: "0 18px", borderRadius: 20, textDecoration: "none", fontSize: "0.88rem", fontWeight: 600 }}>
+          <Link href="/admin/blog/new" className="mAdminCta">
             New post
           </Link>
         </div>

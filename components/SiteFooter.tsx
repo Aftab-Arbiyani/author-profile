@@ -21,6 +21,7 @@ export async function SiteFooter() {
         <Link href="/about">About</Link>
         <Link href="/blog">Blog</Link>
         <Link href="/press">Press</Link>
+        <Link href="/arc">ARC Program</Link>
         <a
           href={storeUrl(storeCode, "B0GX33TZC3")}
           target="_blank"

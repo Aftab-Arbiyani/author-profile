@@ -14,6 +14,25 @@ const nextConfig = {
       { protocol: "http", hostname: "**" },
     ],
   },
+  // Defence in depth for the ARC reader area. These pages read a session
+  // cookie, so Next already renders them dynamically — but the manuscript is
+  // unpublished work, so state it explicitly: never cache it in a shared proxy,
+  // and never index it even if a page's `robots` metadata ever regresses.
+  // (`/arc` itself is deliberately absent — it's a public, indexable page.)
+  async headers() {
+    const noStore = [
+      { key: "Cache-Control", value: "no-store, max-age=0, must-revalidate" },
+      { key: "X-Robots-Tag", value: "noindex, nofollow" },
+    ];
+
+    return [
+      { source: "/arc/read/:path*", headers: noStore },
+      { source: "/arc/library", headers: noStore },
+      { source: "/arc/review/:path*", headers: noStore },
+      { source: "/arc/signin", headers: noStore },
+      { source: "/arc/verify", headers: noStore },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { getBookReviews, starString } from "@/lib/reviews";
 
 // Node runtime so we can read the cover file off disk and inline it.
 export const runtime = "nodejs";
@@ -16,12 +17,17 @@ export const contentType = "image/png";
  * the book, not the generic author graphic. (The site's brand serif is only
  * available as woff2, which satori can't load, so this uses next/og's default
  * font.)
+ *
+ * The star row is derived from the live average (Amazon reviews merged with
+ * approved ARC reviews) rather than hardcoded — a share card claiming five
+ * stars after a four-star ARC review landed would be a false rating.
  */
-export default function OgImage() {
+export default async function OgImage() {
   const cover = readFileSync(
     join(process.cwd(), "public", "the-probationers-cover.jpeg"),
   );
   const coverSrc = `data:image/jpeg;base64,${cover.toString("base64")}`;
+  const { averageRating, reviewCount } = await getBookReviews("the-probationers");
 
   return new ImageResponse(
     (
@@ -89,7 +95,11 @@ export default function OgImage() {
               fontSize: 27,
             }}
           >
-            <span style={{ color: "#d4a84b", letterSpacing: 3 }}>★★★★★</span>
+            {reviewCount > 0 && (
+              <span style={{ color: "#d4a84b", letterSpacing: 3 }}>
+                {starString(averageRating)}
+              </span>
+            )}
             <span>Aftab Arbiyani</span>
           </div>
         </div>

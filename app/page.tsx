@@ -10,11 +10,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { BrandMark } from "@/components/BrandMark";
 import { jsonLdScript } from "@/lib/jsonld";
 import {
-  REVIEWS,
-  AVERAGE_RATING,
-  REVIEW_COUNT,
   BEST_RATING,
-  aggregateRatingJsonLd,
+  getBookReviews,
+  reviewSourceLabel,
   starString,
   formatReviewMonth,
 } from "@/lib/reviews";
@@ -78,25 +76,31 @@ const websiteJsonLd = {
   publisher: { "@id": "https://www.aftabarbiyani.com/#person" },
 };
 
-const bookJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Book",
-  "@id": "https://www.aftabarbiyani.com/#book-the-probationers",
-  name: "The Probationers",
-  // Point at the on-site book page (canonical), not Amazon — the detailed
-  // per-edition markup (Kindle + paperback) lives there via workExample.
-  url: "https://www.aftabarbiyani.com/books/the-probationers",
-  author: { "@id": "https://www.aftabarbiyani.com/#person" },
-  genre: "Psychological Mystery",
-  inLanguage: "en",
-  datePublished: "2026-05-15",
-  image: "https://www.aftabarbiyani.com/the-probationers-cover.jpeg",
-  description:
-    "Six postulants. One snowbound Benedictine abbey in the Umbrian hills. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion. A locked-room mystery about faith, belonging, and the private bargains people make to remain inside the worlds they love.",
-  aggregateRating: aggregateRatingJsonLd,
-  // Purchase data (per-edition offers) lives once on the book page's Book node
-  // via workExample; this home node is a lightweight reference to the same @id.
-};
+// The rating is fetched per request (Amazon reviews merged with approved ARC
+// reviews), so this node is built in the component. Per-review Review nodes are
+// deliberately NOT repeated here — they live once, on the book page — and the
+// aggregate is omitted entirely when there are no reviews.
+function buildBookJsonLd(aggregateRatingJsonLd?: object) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "@id": "https://www.aftabarbiyani.com/#book-the-probationers",
+    name: "The Probationers",
+    // Point at the on-site book page (canonical), not Amazon — the detailed
+    // per-edition markup (Kindle + paperback) lives there via workExample.
+    url: "https://www.aftabarbiyani.com/books/the-probationers",
+    author: { "@id": "https://www.aftabarbiyani.com/#person" },
+    genre: "Psychological Mystery",
+    inLanguage: "en",
+    datePublished: "2026-05-15",
+    image: "https://www.aftabarbiyani.com/the-probationers-cover.jpeg",
+    description:
+      "Six postulants. One snowbound Benedictine abbey in the Umbrian hills. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion. A locked-room mystery about faith, belonging, and the private bargains people make to remain inside the worlds they love.",
+    ...(aggregateRatingJsonLd ? { aggregateRating: aggregateRatingJsonLd } : {}),
+    // Purchase data (per-edition offers) lives once on the book page's Book node
+    // via workExample; this home node is a lightweight reference to the same @id.
+  };
+}
 
 const questions = [
   {
@@ -165,8 +169,14 @@ const books = [
 ];
 
 export default async function Home() {
-  const posts = await getBlogPosts(3);
-  const storeCode = await detectStoreCode();
+  const [posts, storeCode, { reviews, averageRating, reviewCount, aggregateRatingJsonLd }] =
+    await Promise.all([
+      getBlogPosts(3),
+      detectStoreCode(),
+      getBookReviews("the-probationers"),
+    ]);
+
+  const bookJsonLd = buildBookJsonLd(aggregateRatingJsonLd);
 
   return (
     <main>
@@ -347,28 +357,42 @@ export default async function Home() {
       <section className="section split" id="reviews">
         <div>
           <p className="eyebrow">Reader reviews</p>
-          <h2>Five stars from early readers.</h2>
-          <p
-            className="ratingSummary"
-            aria-label={`Rated ${AVERAGE_RATING} out of ${BEST_RATING} from ${REVIEW_COUNT} verified reviews`}
-          >
-            <span className="ratingStars" aria-hidden="true">
-              {starString(AVERAGE_RATING)}
-            </span>
-            {AVERAGE_RATING.toFixed(1)} · {REVIEW_COUNT} verified reviews
-          </p>
+          {/* Heading follows the real average — it must never claim five stars
+              once a merged ARC review pulls the average below it. */}
+          <h2>
+            {averageRating === BEST_RATING
+              ? "Five stars from early readers."
+              : "What early readers say."}
+          </h2>
+          {reviewCount > 0 && (
+            <p
+              className="ratingSummary"
+              aria-label={`Rated ${averageRating} out of ${BEST_RATING} from ${reviewCount} reader reviews`}
+            >
+              <span className="ratingStars" aria-hidden="true">
+                {starString(averageRating)}
+              </span>
+              {averageRating.toFixed(1)} · {reviewCount} reader{" "}
+              {reviewCount === 1 ? "review" : "reviews"}
+            </p>
+          )}
         </div>
         <div className="prose">
           <div className="reviewList">
-            {REVIEWS.map((r) => (
-              <figure className="reviewCard" key={r.name}>
+            {/* A preview — the full list lives on the book page. */}
+            {reviews.slice(0, 3).map((r) => (
+              <figure
+                className="reviewCard"
+                key={`${r.source}-${r.name}-${r.date}`}
+              >
                 <div className="reviewStars" aria-hidden="true">
                   {starString(r.rating)}
                 </div>
                 <p className="reviewTitle">{r.title}</p>
                 <blockquote className="reviewQuote">{r.body}</blockquote>
                 <figcaption className="reviewMeta">
-                  {r.name} · Verified purchase · {formatReviewMonth(r.date)}
+                  {r.name} · {reviewSourceLabel(r.source)} ·{" "}
+                  {formatReviewMonth(r.date)}
                 </figcaption>
               </figure>
             ))}
@@ -423,6 +447,12 @@ export default async function Home() {
         <div>
           <p className="eyebrow">Newsletter</p>
           <h2>Get early access to the next mystery.</h2>
+          <p className="arcCrossLink">
+            Want to read it before publication and review it?{" "}
+            <Link className="textLink" href="/arc">
+              Join the ARC reader team →
+            </Link>
+          </p>
         </div>
         <SubscribeForm />
       </section>

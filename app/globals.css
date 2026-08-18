@@ -1239,6 +1239,23 @@ h1 {
   flex-shrink: 0;
 }
 
+/* The brand block doubles as an "up one level" link on every admin surface */
+.mTopBarHome {
+  border-radius: 8px;
+  margin-left: -6px;
+  padding: 4px 8px 4px 6px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.mTopBarHome:hover {
+  background: #f5f5f5;
+}
+
+.mTopBarHome:hover .mTopBarDraft {
+  color: #1a1a1a;
+}
+
 .mTopBarDraft {
   color: #6b6b6b;
   font-size: 0.88rem;
@@ -1955,8 +1972,45 @@ details[open] .mPostSettingsTrigger::before {
     padding: 36px 18px 120px;
   }
 
-  .mTopBarSignOut {
+  /* Only the writing canvas sheds its bar links on mobile — its bar also
+     carries Draft/Publish. The hub, post list and ARC pages keep theirs,
+     since sign-out and cross-navigation are the whole point of those bars. */
+  .mTopBarEditor .mTopBarSignOut {
     display: none;
+  }
+
+  /* The ARC bar carries four tabs plus sign-out — more than one 56px row can
+     hold on a phone. Wrap it onto a second row rather than let it push the
+     page into a horizontal scroll. */
+  .mTopBarArc {
+    flex-wrap: wrap;
+    height: auto;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    row-gap: 8px;
+  }
+
+  .mTopBarArc .mTopBarRight {
+    margin-left: auto;
+    order: 2;
+  }
+
+  .mTopBarArc .mArcTabs {
+    flex-wrap: wrap;
+    margin-left: 0;
+    order: 3;
+    width: 100%;
+  }
+
+  /* Stack each setup note as chip-above-detail; side by side there isn't
+     room for both without the detail wrapping under the chip anyway. */
+  .mAdminSetupList li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mAdminSetupList span {
+    min-width: 0;
   }
 }
 
@@ -2249,4 +2303,1015 @@ details[open] .mPostSettingsTrigger::before {
   color: var(--muted);
   font-size: 0.88rem;
   margin-top: 14px;
+}
+
+/* ── ARC reader program ─────────────────────────────────────────────────
+   Public landing (/arc), reader library and in-browser reader. Reuses the
+   site tokens and the existing .section / .subscribeForm / .articleBody
+   shells wherever possible — these rules only fill the gaps. */
+
+/* Apply form: same shell as .subscribeForm, plus a textarea and a full-width
+   submit (the newsletter's inline .subscribeRow button doesn't fit here). */
+.arcApplyForm textarea {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.6;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+.arcApplyButton {
+  background: var(--night);
+  border: 0;
+  border-radius: 6px;
+  color: #f7f1e4;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  min-height: 48px;
+  margin-top: 4px;
+  padding: 0 18px;
+}
+
+.arcApplyButton:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.arcApplyNote,
+.arcCrossLink {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 18px 0 0;
+}
+
+/* How-it-works steps on the landing page */
+.arcSteps {
+  display: grid;
+  gap: 26px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.arcStep {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.arcStepNumber {
+  align-items: center;
+  background: var(--night);
+  border-radius: 50%;
+  color: var(--amber);
+  display: flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.arcStepTitle {
+  color: var(--ink) !important;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 4px 0 6px !important;
+}
+
+/* Status badges shared by the library and the admin ARC pages */
+.arcStatusBadge {
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 4px 11px;
+  text-transform: uppercase;
+}
+
+.arcStatusPending {
+  background: rgba(212, 168, 75, 0.18);
+  color: #8a6a1f;
+}
+
+.arcStatusApproved,
+.arcStatusActive {
+  background: rgba(82, 96, 82, 0.16);
+  color: var(--moss);
+}
+
+.arcStatusRejected,
+.arcStatusRevoked {
+  background: rgba(95, 47, 58, 0.14);
+  color: var(--wine);
+}
+
+/* ── ARC admin (/admin/arc/**) ───────────────────────────────────────────
+   Extends the blog admin's m* system: same greys, same 740px column, same
+   mBtnDraft / mBtnPublish buttons. */
+
+.mArcNotice {
+  color: #1a8917;
+  flex: 1;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+
+.mArcTabs {
+  display: flex;
+  gap: 4px;
+}
+
+/* Push the tab row against the sign-out button on the right of the ARC bar */
+.mTopBarArc .mArcTabs {
+  margin-left: auto;
+}
+
+.mArcTab {
+  border-radius: 20px;
+  color: #6b6b6b;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  text-decoration: none;
+}
+
+.mArcTab:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.mArcTab.isActive {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.mArcEmail {
+  color: #aaa;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.mArcLinks {
+  display: flex;
+  gap: 14px;
+  margin: 10px 0 0;
+}
+
+.mArcLinks a {
+  color: #6b6b6b;
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mArcActions,
+.mArcAddForm {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.mArcAddForm {
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  padding: 20px;
+}
+
+.mArcFieldset {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.mArcFieldset legend {
+  color: #6b6b6b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0 6px;
+  text-transform: uppercase;
+}
+
+.mArcCheck {
+  align-items: center;
+  color: #1a1a1a;
+  display: flex;
+  font-size: 0.92rem;
+  gap: 8px;
+}
+
+.mArcHint {
+  color: #6b6b6b;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.mArcHint a {
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mArcButtons,
+.mArcRowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mArcRowActions {
+  align-items: center;
+  margin-top: 14px;
+}
+
+.mArcInlineForm {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+}
+
+.mArcInlineForm select,
+.mArcSelect {
+  background: #f9f9f9;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 0.88rem;
+  height: 34px;
+  max-width: 200px;
+  padding: 0 8px;
+}
+
+.mArcReviewBody {
+  background: #fafafa;
+  border-left: 3px solid #e0e0e0;
+  color: #4a4a4a;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  white-space: pre-wrap;
+}
+
+.mArcStars {
+  color: var(--amber);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+/* Admin hub (/admin) — the crossroads between the blog and ARC admin areas */
+.mAdminHub {
+  margin: 0 auto;
+  max-width: 900px;
+  padding: clamp(32px, 6vw, 56px) 24px 80px;
+}
+
+.mAdminHubTitle {
+  color: #1a1a1a;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.7rem, 4vw, 2.2rem);
+  font-weight: 700;
+  margin: 0;
+}
+
+.mAdminHubSub {
+  color: #6b6b6b;
+  font-size: 0.95rem;
+  margin: 8px 0 32px;
+  max-width: 52ch;
+}
+
+.mAdminHubGrid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.mAdminCard {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.mAdminCardHead {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.mAdminCardTitle {
+  color: #1a1a1a;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mAdminCardLink {
+  color: #6b6b6b;
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mAdminCardLink:hover {
+  color: #1a1a1a;
+}
+
+.mAdminStats {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.mAdminStat {
+  background: #fafafa;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.mAdminStat:hover {
+  background: #f2f2f2;
+}
+
+.mAdminStat.isAlert {
+  background: #fffaf0;
+  border-color: #f0dcae;
+}
+
+.mAdminStatValue {
+  color: #1a1a1a;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.mAdminStat.isAlert .mAdminStatValue {
+  color: #9a6b00;
+}
+
+.mAdminStatLabel {
+  color: #6b6b6b;
+  font-size: 0.82rem;
+}
+
+.mAdminCardActions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.mAdminCta {
+  align-items: center;
+  background: #1a8917;
+  border-radius: 20px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.88rem;
+  font-weight: 600;
+  height: 34px;
+  padding: 0 18px;
+  text-decoration: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.mAdminCta:hover {
+  background: #156912;
+}
+
+.mAdminSetup {
+  border-top: 1px solid #e8e8e8;
+  margin-top: 40px;
+  padding-top: 24px;
+}
+
+.mAdminSetupTitle {
+  color: #6b6b6b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+
+.mAdminSetupList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mAdminSetupList li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.mAdminSetupList code {
+  background: #f5f5f5;
+  border-radius: 4px;
+  color: #c0392b;
+  font-size: 0.8rem;
+  padding: 2px 7px;
+}
+
+.mAdminSetupList span {
+  color: #6b6b6b;
+  flex: 1;
+  font-size: 0.85rem;
+  min-width: 220px;
+}
+
+/* ARC auth pages (sign in / verify) — a centred card on the paper ground */
+.arcAuthPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 78vh;
+  padding: 24px clamp(18px, 4vw, 42px) 72px;
+}
+
+.arcAuthNav {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1120px;
+  width: 100%;
+}
+
+.arcAuthBrand {
+  align-items: center;
+  color: var(--ink);
+  display: inline-flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  gap: 10px;
+}
+
+.arcAuthCard {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin: clamp(40px, 8vw, 80px) auto 0;
+  max-width: 520px;
+  padding: clamp(28px, 5vw, 44px);
+  width: 100%;
+}
+
+.arcAuthTitle {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.05;
+  margin: 0 0 18px;
+}
+
+.arcAuthBody {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.arcAuthForm {
+  display: grid;
+  margin-top: 26px;
+}
+
+.arcAuthFoot {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 22px 0 0;
+}
+
+/* ARC library */
+.arcLibraryHeader {
+  border-bottom: 1px solid var(--line);
+  padding: 24px clamp(18px, 4vw, 42px) clamp(36px, 6vw, 56px);
+}
+
+.arcSignoutButton {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 7px 15px;
+}
+
+.arcSignoutButton:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.arcLibraryIntro {
+  margin: clamp(40px, 7vw, 72px) auto 0;
+  max-width: 1120px;
+}
+
+.arcLibraryTitle {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 0;
+}
+
+.arcLibraryLede {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+  line-height: 1.65;
+  margin: 20px 0 0;
+  max-width: 620px;
+}
+
+.arcLibrarySection {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(40px, 7vw, 72px) clamp(18px, 4vw, 42px);
+}
+
+.arcLibraryEmpty {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.arcLibraryGrid {
+  display: grid;
+  gap: 28px;
+}
+
+.arcLibraryCard {
+  background: #fffaf0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  gap: clamp(20px, 4vw, 34px);
+  grid-template-columns: 200px minmax(0, 1fr);
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.arcLibraryCover {
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
+  box-shadow: 0 12px 28px rgba(23, 21, 18, 0.18);
+  overflow: hidden;
+  position: relative;
+}
+
+.arcLibraryCoverImg {
+  object-fit: cover;
+}
+
+.arcLibraryInfo {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.arcLibraryBookTitle {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.arcLibraryMeta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.arcLibraryDesc {
+  color: var(--read);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.arcLibraryActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (max-width: 700px) {
+  .arcLibraryCard {
+    grid-template-columns: 1fr;
+  }
+
+  .arcLibraryCover {
+    max-width: 180px;
+  }
+}
+
+/* ARC reader (in-browser manuscript) — reuses .articlePage / .articleBody
+   typography from the blog, adds a chapter bar, nav and pager. */
+.arcReaderBar {
+  align-items: center;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  padding: 14px clamp(18px, 4vw, 42px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.arcReaderBack {
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.arcReaderBack:hover {
+  color: var(--ink);
+}
+
+.arcReaderBookTitle {
+  color: var(--ink);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arcReaderCount {
+  color: var(--muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.arcReaderPage {
+  padding-top: clamp(32px, 5vw, 56px);
+}
+
+.arcChapterNav {
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  margin: 28px 0 8px;
+  padding: 4px 0;
+}
+
+.arcChapterNav summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  list-style: none;
+  padding: 12px 0;
+  text-transform: uppercase;
+}
+
+.arcChapterNav summary::-webkit-details-marker {
+  display: none;
+}
+
+.arcChapterList {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.arcChapterList a {
+  align-items: baseline;
+  border-radius: 6px;
+  color: var(--read);
+  display: flex;
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.02rem;
+  gap: 12px;
+  padding: 9px 10px;
+}
+
+.arcChapterList a:hover {
+  background: rgba(23, 21, 18, 0.05);
+}
+
+.arcChapterList a.isCurrent {
+  background: rgba(212, 168, 75, 0.16);
+  font-weight: 700;
+}
+
+.arcChapterNumber {
+  color: var(--muted);
+  font-size: 0.82rem;
+  min-width: 18px;
+}
+
+.arcChapterPager {
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 56px;
+  padding-top: 32px;
+}
+
+.arcReaderEnd {
+  border-top: 1px solid var(--line);
+  margin-top: 48px;
+  padding-top: 40px;
+}
+
+.arcReaderEnd h2 {
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 500;
+  letter-spacing: 0;
+  margin: 0 0 14px;
+}
+
+.arcReaderEnd p {
+  color: var(--muted);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  margin: 0 0 24px;
+}
+
+/* Admin: chapter-order field and textarea, section head with an action */
+.mArcOrderField {
+  margin-top: 18px;
+  max-width: 180px;
+}
+
+.mArcTextarea {
+  background: #f9f9f9;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  outline: none;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.mArcTextarea:focus {
+  background: #fff;
+  border-color: #1a1a1a;
+}
+
+.mArcSectionHead {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.mArcHeadButton {
+  align-items: center;
+  border-radius: 20px;
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 600;
+  height: 32px;
+  margin-bottom: 12px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+/* ARC review form (rating radios + locked published state) */
+.arcReviewCard {
+  max-width: 620px;
+}
+
+.arcRatingField {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 0;
+  padding: 14px 16px;
+}
+
+.arcRatingField legend {
+  color: var(--wine);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0 6px;
+  text-transform: uppercase;
+}
+
+.arcRatingOptions {
+  display: grid;
+  gap: 4px;
+}
+
+.arcRatingOption {
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 7px 8px;
+}
+
+.arcRatingOption:hover {
+  background: rgba(23, 21, 18, 0.04);
+}
+
+.arcRatingOption:has(input:checked) {
+  background: rgba(212, 168, 75, 0.16);
+}
+
+.arcRatingStars {
+  color: var(--amber);
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+}
+
+.arcRatingLabel {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.arcReviewLocked {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.arcReviewStars {
+  color: var(--amber);
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+}
+
+.arcReviewLockedTitle {
+  color: var(--ink);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.arcReviewLockedBody {
+  color: var(--read);
+  font-family: charter, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ── ARC manuscript protection ──────────────────────────────────────────── */
+
+/* Reader identity in the sticky bar. Hidden on narrow screens, where the bar
+   has no room for it — the line under the chapter body carries it there. */
+.arcReaderWatermark {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .arcReaderWatermark {
+    display: none;
+  }
+}
+
+.arcWatermarkLine {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin: 36px 0 0;
+  padding-top: 14px;
+}
+
+/* Scoped to .arcReaderPage on purpose: .articleBody is shared with the public
+   blog, which must stay selectable and printable. */
+.arcReaderPage .articleBody {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Screenshot-resistant attribution: the reader's address, tiled diagonally over
+   the prose (tile built in lib/watermark.ts). The zero-width fingerprint woven
+   into the same text doesn't survive OCR or a phone camera pointed at the
+   screen; this does. Purely decorative — aria-hidden in the markup and inert
+   here — so it never reaches the accessibility tree or swallows a click on a
+   link in the chapter beneath it. */
+.arcBodyGuard {
+  position: relative;
+}
+
+.arcBodyShield {
+  background-repeat: repeat;
+  inset: 0;
+  /* Low enough to read a chapter through for an hour, high enough that the
+     address is legible in a leaked screenshot without post-processing. Tune
+     here, not in the SVG. Past ~0.18 it starts competing with the prose. */
+  opacity: 0.14;
+  pointer-events: none;
+  position: absolute;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 1;
+}
+
+@media print {
+  .arcReaderPage .arcBodyGuard,
+  .arcReaderPage .articleBody,
+  .arcReaderPage .arcChapterNav,
+  .arcReaderPage .arcChapterPager,
+  .arcReaderPage .arcReaderEnd {
+    display: none !important;
+  }
+
+  .arcReaderPage h1::after {
+    content: "Printing is disabled for advance copies.";
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 1em;
+  }
+}
+
+/* EPUB importer preview rows. */
+.mImportRow {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0 0;
+}
+
+.mImportRow input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mImportRow input[type="text"]:disabled {
+  color: var(--muted);
+}
+
+/* Reason recorded when a review is declined. */
+.mArcRejectReason {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 6px 0 0;
+}
+
+.mImportOrder {
+  flex: 0 0 5rem;
+  text-align: center;
 }

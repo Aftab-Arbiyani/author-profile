@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAdminAuthenticated, loginAdmin } from "@/lib/admin-auth";
+import {
+  clearLoginAttempts,
+  failureDelay,
+  isLoginBlocked,
+  recordFailedLogin,
+} from "@/lib/login-throttle";
 
 type Props = { searchParams: Promise<{ status?: string }> };
 
@@ -10,7 +16,7 @@ export const metadata = {
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  if (await isAdminAuthenticated()) redirect("/admin/blog/new");
+  if (await isAdminAuthenticated()) redirect("/admin");
 
   const { status } = await searchParams;
 
@@ -22,6 +28,11 @@ export default async function LoginPage({ searchParams }: Props) {
 
         {status === "forbidden" && (
           <p className="mLoginError">Incorrect password. Try again.</p>
+        )}
+        {status === "throttled" && (
+          <p className="mLoginError">
+            Too many failed attempts. Try again in 15 minutes.
+          </p>
         )}
         {status === "missing-config" && (
           <p className="mLoginError">
@@ -62,8 +73,20 @@ async function loginAction(formData: FormData) {
 
   if (!process.env.BLOG_ADMIN_SECRET) redirect("/admin/login?status=missing-config");
 
-  const ok = await loginAdmin(String(formData.get("password") ?? ""));
-  if (!ok) redirect("/admin/login?status=forbidden");
+  // Checked before the password is even compared, so a blocked address gets no
+  // signal about whether its guess was right.
+  if (await isLoginBlocked()) redirect("/admin/login?status=throttled");
 
-  redirect("/admin/blog/new");
+  const ok = await loginAdmin(String(formData.get("password") ?? ""));
+
+  if (!ok) {
+    // Delay and count run together: the wall-clock floor applies to every wrong
+    // password, not just the ones that reach the limit.
+    const [tripped] = await Promise.all([recordFailedLogin(), failureDelay()]);
+    redirect(`/admin/login?status=${tripped ? "throttled" : "forbidden"}`);
+  }
+
+  await clearLoginAttempts();
+
+  redirect("/admin");
 }

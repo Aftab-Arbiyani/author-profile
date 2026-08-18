@@ -10,12 +10,9 @@ import { detectStoreCode } from "@/lib/detect-store";
 import { storeUrl, AMAZON_LINK_REL } from "@/lib/amazon";
 import { jsonLdScript } from "@/lib/jsonld";
 import {
-  REVIEWS,
-  AVERAGE_RATING,
-  REVIEW_COUNT,
   BEST_RATING,
-  aggregateRatingJsonLd,
-  reviewsJsonLd,
+  getBookReviews,
+  reviewSourceLabel,
   starString,
   formatReviewMonth,
 } from "@/lib/reviews";
@@ -53,7 +50,19 @@ export const metadata: Metadata = {
 // Two editions of one work. The buy links route through the reader's regional
 // Amazon store (BuyOnAmazon); the structured data below lists both formats so
 // search and AI engines know the book exists in ebook and print.
-const bookJsonLd = {
+//
+// Built as a function because the rating data is fetched per request (Amazon
+// reviews merged with author-approved ARC reviews). The aggregateRating and
+// review keys are omitted entirely when there are no reviews, rather than
+// emitting a zero-count aggregate.
+function buildBookJsonLd({
+  aggregateRatingJsonLd,
+  reviewsJsonLd,
+}: {
+  aggregateRatingJsonLd?: object;
+  reviewsJsonLd?: object[];
+}) {
+  return {
   "@context": "https://schema.org",
   "@type": "Book",
   "@id": "https://www.aftabarbiyani.com/#book-the-probationers",
@@ -66,8 +75,8 @@ const bookJsonLd = {
   image: "https://www.aftabarbiyani.com/the-probationers-cover.jpeg",
   description:
     "Six postulants. One snowbound Benedictine abbey in the Umbrian hills. A novice master found dead beneath the bell tower, and a truth hidden inside a lifetime of devotion. A locked-room mystery about faith, belonging, and the private bargains people make to remain inside the worlds they love.",
-  aggregateRating: aggregateRatingJsonLd,
-  review: reviewsJsonLd,
+  ...(aggregateRatingJsonLd ? { aggregateRating: aggregateRatingJsonLd } : {}),
+  ...(reviewsJsonLd?.length ? { review: reviewsJsonLd } : {}),
   workExample: [
     {
       "@type": "Book",
@@ -102,7 +111,8 @@ const bookJsonLd = {
       },
     },
   ],
-};
+  };
+}
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -172,7 +182,10 @@ const details = [
 ];
 
 export default async function TheProbationersPage() {
-  const storeCode = await detectStoreCode();
+  const [storeCode, { reviews, averageRating, reviewCount, aggregateRatingJsonLd, reviewsJsonLd }] =
+    await Promise.all([detectStoreCode(), getBookReviews("the-probationers")]);
+
+  const bookJsonLd = buildBookJsonLd({ aggregateRatingJsonLd, reviewsJsonLd });
 
   return (
     <main>
@@ -250,15 +263,18 @@ export default async function TheProbationersPage() {
                 of buried secrets converge. Available as a Kindle ebook and a
                 361-page paperback.
               </p>
-              <p
-                className="ratingSummary"
-                aria-label={`Rated ${AVERAGE_RATING} out of ${BEST_RATING} from ${REVIEW_COUNT} verified reviews`}
-              >
-                <span className="ratingStars" aria-hidden="true">
-                  {starString(AVERAGE_RATING)}
-                </span>
-                {AVERAGE_RATING.toFixed(1)} · {REVIEW_COUNT} verified reviews
-              </p>
+              {reviewCount > 0 && (
+                <p
+                  className="ratingSummary"
+                  aria-label={`Rated ${averageRating} out of ${BEST_RATING} from ${reviewCount} reader reviews`}
+                >
+                  <span className="ratingStars" aria-hidden="true">
+                    {starString(averageRating)}
+                  </span>
+                  {averageRating.toFixed(1)} · {reviewCount} reader{" "}
+                  {reviewCount === 1 ? "review" : "reviews"}
+                </p>
+              )}
               <div className="bookMeta">
                 <span>Paperback ISBN 9798197795472</span>
                 <BuyOnAmazon
@@ -368,27 +384,31 @@ export default async function TheProbationersPage() {
         <div>
           <p className="eyebrow">Reader reviews</p>
           <h2>What readers say.</h2>
-          <p
-            className="ratingSummary"
-            aria-label={`Rated ${AVERAGE_RATING} out of ${BEST_RATING} from ${REVIEW_COUNT} verified reviews`}
-          >
-            <span className="ratingStars" aria-hidden="true">
-              {starString(AVERAGE_RATING)}
-            </span>
-            {AVERAGE_RATING.toFixed(1)} · {REVIEW_COUNT} verified reviews
-          </p>
+          {reviewCount > 0 && (
+            <p
+              className="ratingSummary"
+              aria-label={`Rated ${averageRating} out of ${BEST_RATING} from ${reviewCount} reader reviews`}
+            >
+              <span className="ratingStars" aria-hidden="true">
+                {starString(averageRating)}
+              </span>
+              {averageRating.toFixed(1)} · {reviewCount} reader{" "}
+              {reviewCount === 1 ? "review" : "reviews"}
+            </p>
+          )}
         </div>
         <div className="prose">
           <div className="reviewList">
-            {REVIEWS.map((r) => (
-              <figure className="reviewCard" key={r.name}>
+            {reviews.map((r) => (
+              <figure className="reviewCard" key={`${r.source}-${r.name}-${r.date}`}>
                 <div className="reviewStars" aria-hidden="true">
                   {starString(r.rating)}
                 </div>
                 <p className="reviewTitle">{r.title}</p>
                 <blockquote className="reviewQuote">{r.body}</blockquote>
                 <figcaption className="reviewMeta">
-                  {r.name} · Verified purchase · {formatReviewMonth(r.date)}
+                  {r.name} · {reviewSourceLabel(r.source)} ·{" "}
+                  {formatReviewMonth(r.date)}
                 </figcaption>
               </figure>
             ))}
@@ -426,6 +446,12 @@ export default async function TheProbationersPage() {
         <div>
           <p className="eyebrow">Newsletter</p>
           <h2>Get early access to the next mystery.</h2>
+          <p className="arcCrossLink">
+            Want to read it before publication?{" "}
+            <Link className="textLink" href="/arc">
+              Apply to the ARC reader team →
+            </Link>
+          </p>
         </div>
         <SubscribeForm />
       </section>
